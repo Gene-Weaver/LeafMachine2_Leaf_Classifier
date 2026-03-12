@@ -32,6 +32,16 @@ MODEL_FILES = {
 }
 
 
+def check_existing_models():
+    """Check if all model .data files already exist. Returns list of missing models."""
+    missing = []
+    for model_name, filename in MODEL_FILES.items():
+        data_path = MODELS_DIR / model_name / filename
+        if not data_path.exists():
+            missing.append(model_name)
+    return missing
+
+
 def fetch_latest_release():
     """Fetch the latest release info from GitHub API."""
     try:
@@ -63,8 +73,22 @@ def main():
     print("Downloading Pre-trained Model Weights")
     print("=" * 60)
 
-    # Fetch latest release
+    # Check if models already exist
+    print("\nChecking for existing model weights...")
+    missing = check_existing_models()
+
+    if not missing:
+        print("✓ All model weights already downloaded!")
+        print(f"\nModels are ready at: {MODELS_DIR}")
+        print("\nYou can now run:")
+        print("  python ensemble_inference.py --input /path/to/images")
+        print("=" * 60)
+        return
+
+    print(f"⚠ Missing models: {', '.join(missing)}")
     print("\nFetching latest release from GitHub...")
+
+    # Fetch latest release
     release = fetch_latest_release()
 
     if not release:
