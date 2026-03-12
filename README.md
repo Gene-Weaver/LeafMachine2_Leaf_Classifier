@@ -183,11 +183,7 @@ The model correctly identifies quality issues and predicts **fail**.
 #### Pass Example: *Anisosepalum alboviolaceum*
 ![Pass example - Anisosepalum alboviolaceum](classification_examples/pass_example_anisosepalum.png)
 
-Another successful pass prediction showing consistent quality assessment across plant families.
-
-## Development & Training
-
-See `CLAUDE.md` for detailed training instructions, configuration parameters, and architecture explanations.
+A borderline image that will either pass or fail depending on the strictness setting. 
 
 ### Requirements
 
@@ -216,7 +212,6 @@ LM2_Leaf_Classifier/
 ├── train_*.py                       # Training scripts
 ├── requirements.txt                 # Lightweight inference dependencies
 ├── requirements_training.txt        # Full training dependencies
-├── CLAUDE.md                        # Detailed architecture & configuration guide
 └── README.md                        # This file
 ```
 
@@ -276,15 +271,3 @@ python ensemble_inference.py --input /data --strictness lax
 - **ConvNeXt V2** – Modern CNN architecture ([timm](https://github.com/huggingface/pytorch-image-models))
 - **EfficientNet** – Efficient CNN scaling ([TensorFlow](https://github.com/tensorflow/models/tree/master/research/slim/nets/efficientnet))
 - **ONNX Runtime** – Cross-platform inference ([onnxruntime.ai](https://onnxruntime.ai))
-
-## License
-
-[Add your license here]
-
-## Contact
-
-[Add contact information]
-
----
-
-For detailed training, configuration, and architecture information, see **[CLAUDE.md](CLAUDE.md)**.
