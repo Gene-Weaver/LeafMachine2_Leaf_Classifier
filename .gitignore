@@ -60,8 +60,12 @@ CLAUDE.md
 .DS_Store
 Thumbs.db
 
+# Large model weight files (downloaded separately via download_models.py)
+models/**/*.onnx.data
+
 # Keep these tracked:
-# - models/
+# - models/*.onnx (model architectures)
+# - models/*.json (configs)
 # - qc_output/
 # - strictness_comparison/
 # - classification_examples/

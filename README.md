@@ -28,12 +28,17 @@ The visualization above shows how different strictness settings affect pass/fail
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/LM2_Leaf_Classifier.git
-cd LM2_Leaf_Classifier
+git clone https://github.com/Gene-Weaver/LeafMachine2_Leaf_Classifier.git
+cd LeafMachine2_Leaf_Classifier
 
 # Install inference dependencies (lightweight, no training required)
 pip install -r requirements.txt
+
+# Download pre-trained model weights (~500 MB)
+python download_models.py
 ```
+
+The `download_models.py` script fetches the latest model weight files from GitHub Releases. This is a one-time setup step.
 
 ### Inference
 
