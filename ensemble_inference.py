@@ -46,6 +46,43 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+
+# ============================================================================
+# MODEL AVAILABILITY CHECK
+# ============================================================================
+
+def check_and_download_models(model_dirs: dict) -> bool:
+    """
+    Check if model .data files exist. If missing, prompt user to run download_models.py.
+    Returns True if all models are available, False otherwise.
+    """
+    required_data_files = {
+        "efficientnet_b3": "leaf_classifier.onnx.data",
+        "convnextv2": "leaf_classifier.onnx.data",
+        "dinov2": "leaf_classifier_dinov2.onnx.data",
+    }
+
+    missing_models = []
+    for model_name, data_file in required_data_files.items():
+        data_path = Path(model_dirs[model_name]) / data_file
+        if not data_path.exists():
+            missing_models.append(model_name)
+
+    if missing_models:
+        logger.warning("=" * 60)
+        logger.warning("MODEL WEIGHTS NOT FOUND")
+        logger.warning("=" * 60)
+        logger.warning(f"\nMissing: {', '.join(missing_models)}")
+        logger.warning("\nModel weight files (.onnx.data) are required for inference.")
+        logger.warning("They are downloaded separately to keep the repository small.\n")
+        logger.warning("To download models, run:")
+        logger.warning("  python download_models.py\n")
+        logger.warning("This will fetch the latest pre-trained weights from GitHub Releases.")
+        logger.warning("=" * 60 + "\n")
+        return False
+
+    return True
+
 # ============================================================================
 # DEFAULTS
 # ============================================================================
@@ -638,6 +675,11 @@ def main():
     }
     for name, d in model_dirs.items():
         logger.info(f"  {name}: {d}")
+
+    # Check if model weights are available
+    if not check_and_download_models(model_dirs):
+        logger.error("Cannot proceed without model weights. Please download them first.")
+        sys.exit(1)
 
     # Probe GPU
     gpu_mode = probe_gpu_capacity()
