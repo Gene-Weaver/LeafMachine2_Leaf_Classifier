@@ -826,7 +826,7 @@ def export_model(model: ConvNeXtV2LeafClassifier, output_dir: str):
     dummy = torch.randn(1, 3, TILE_SIZE, TILE_SIZE, device=DEVICE)
 
     if EXPORT_ONNX:
-        onnx_path = os.path.join(output_dir, "leaf_classifier.onnx")
+        onnx_path = os.path.join(output_dir, "leaf_classifier_convnextv2.onnx")
         try:
             torch.onnx.export(
                 export_wrapper, dummy, onnx_path,

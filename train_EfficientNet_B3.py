@@ -540,7 +540,7 @@ def export_model(model: EfficientNetB3LeafClassifier, output_dir: str):
     dummy = torch.randn(1, 3, IMAGE_SIZE, IMAGE_SIZE, device=DEVICE)
 
     if EXPORT_ONNX:
-        onnx_path = os.path.join(output_dir, "leaf_classifier.onnx")
+        onnx_path = os.path.join(output_dir, "leaf_classifier_efficientnet_b3.onnx")
         try:
             torch.onnx.export(
                 model, dummy, onnx_path,

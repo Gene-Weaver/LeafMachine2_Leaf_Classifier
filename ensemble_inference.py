@@ -100,8 +100,8 @@ DEFAULT_MODEL_DIRS = {
 
 # ONNX file names produced by the training scripts
 ONNX_FILENAMES = {
-    "efficientnet_b3": "leaf_classifier.onnx",
-    "convnextv2":      "leaf_classifier.onnx",
+    "efficientnet_b3": "leaf_classifier_efficientnet_b3.onnx",
+    "convnextv2":      "leaf_classifier_convnextv2.onnx",
     "dinov2":          "leaf_classifier_dinov2.onnx",
 }
 
@@ -431,6 +431,7 @@ class EnsembleRunner:
                 model_dir = model_dirs[name]
                 onnx_path = os.path.join(model_dir, spec["onnx_file"])
                 config_path = os.path.join(model_dir, spec["config_file"])
+                logger.info(f"DEBUG: {name} - file={spec['onnx_file']}, path={onnx_path}")
 
                 if not os.path.exists(onnx_path):
                     logger.warning(f"ONNX file not found: {onnx_path} — skipping {name}")
