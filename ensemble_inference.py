@@ -57,8 +57,8 @@ def check_and_download_models(model_dirs: dict) -> bool:
     Returns True if all models are available, False otherwise.
     """
     required_data_files = {
-        "efficientnet_b3": "leaf_classifier.onnx.data",
-        "convnextv2": "leaf_classifier.onnx.data",
+        "efficientnet_b3": "leaf_classifier_efficientnet_b3.onnx.data",
+        "convnextv2": "leaf_classifier_convnextv2.onnx.data",
         "dinov2": "leaf_classifier_dinov2.onnx.data",
     }
 

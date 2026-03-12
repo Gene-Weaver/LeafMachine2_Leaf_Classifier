@@ -26,8 +26,8 @@ MODELS_DIR = SCRIPT_DIR / "models"
 
 # Model files to download (from latest release)
 MODEL_FILES = {
-    "efficientnet_b3": "leaf_classifier.onnx.data",
-    "convnextv2": "leaf_classifier.onnx.data",
+    "efficientnet_b3": "leaf_classifier_efficientnet_b3.onnx.data",
+    "convnextv2": "leaf_classifier_convnextv2.onnx.data",
     "dinov2": "leaf_classifier_dinov2.onnx.data",
 }
 
