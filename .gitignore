@@ -37,6 +37,7 @@ env/
 
 # Training outputs (keep models/)
 output_*/
+test_deployment/
 
 # Data directories
 data/
