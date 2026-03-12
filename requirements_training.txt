@@ -1,0 +1,22 @@
+# Leaf Pass/Fail Classifier — Requirements
+# ==========================================
+
+# Core (both ConvNeXt and DINOv2)
+torch>=2.1.0
+torchvision>=0.16.0
+Pillow>=10.0.0
+numpy>=1.24.0
+
+# ConvNeXt backbone (via timm)
+timm>=1.0.0
+
+# DINOv2 QC attention visualizations
+matplotlib>=3.7.0
+
+# ONNX export & inference (optional — needed only for portable deployment)
+onnx>=1.15.0
+onnxscript
+onnxruntime-gpu>=1.17.0       # use `onnxruntime` (CPU-only) if no GPU
+
+# Utilities
+tqdm>=4.65.0

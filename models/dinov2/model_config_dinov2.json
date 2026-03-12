@@ -1,0 +1,21 @@
+{
+  "dinov2_model": "dinov2_vitb14",
+  "tile_size": 518,
+  "patch_size": 14,
+  "tile_overlap": 0.25,
+  "max_tiles": 32,
+  "class_names": [
+    "pass",
+    "fail"
+  ],
+  "imagenet_mean": [
+    0.485,
+    0.456,
+    0.406
+  ],
+  "imagenet_std": [
+    0.229,
+    0.224,
+    0.225
+  ]
+}

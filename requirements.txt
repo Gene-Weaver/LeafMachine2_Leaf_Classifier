@@ -1,0 +1,7 @@
+# Ensemble Leaf Classifier — Inference Requirements
+# ==================================================
+# Minimal dependencies to run ensemble_inference.py (no PyTorch needed).
+
+Pillow>=10.0.0
+numpy>=1.24.0
+onnxruntime-gpu>=1.17.0       # use `onnxruntime` (CPU-only) if no GPU

@@ -1,0 +1,67 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environments
+.venv
+.venv_*
+venv/
+ENV/
+env/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Training outputs (keep models/)
+output_*/
+
+# Data directories
+data/
+/data
+
+# Test results and logs
+*.log
+*.csv
+results/
+test_results/
+
+# Development docs
+CLAUDE.md
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Keep these tracked:
+# - models/
+# - qc_output/
+# - strictness_comparison/
+# - classification_examples/
