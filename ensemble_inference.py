@@ -39,12 +39,93 @@ from PIL import Image
 # LOGGING
 # ============================================================================
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    handlers=[logging.StreamHandler(sys.stdout)],
-)
+_LOG_DIR = Path(__file__).resolve().parent / "logs"
+_LOG_DIR.mkdir(exist_ok=True)
+_LOG_FILE = _LOG_DIR / f"ensemble_inference_{int(time.time())}.log"
+
+_fmt = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s")
+
+_console_handler = logging.StreamHandler(sys.stdout)
+_console_handler.setLevel(logging.INFO)
+_console_handler.setFormatter(_fmt)
+
+_file_handler = logging.FileHandler(_LOG_FILE, mode="w", encoding="utf-8")
+_file_handler.setLevel(logging.DEBUG)   # capture DEBUG-level system info
+_file_handler.setFormatter(_fmt)
+
+logging.basicConfig(level=logging.DEBUG, handlers=[_console_handler, _file_handler])
 logger = logging.getLogger(__name__)
+
+
+# ============================================================================
+# SYSTEM INFO
+# ============================================================================
+
+def log_system_info():
+    """Write system / environment diagnostics to the log at startup."""
+    import platform
+    import multiprocessing
+    import subprocess
+
+    logger.debug("=" * 60)
+    logger.debug("SYSTEM INFORMATION")
+    logger.debug("=" * 60)
+    logger.debug(f"Log file:          {_LOG_FILE}")
+    logger.debug(f"OS:                {platform.platform()}")
+    logger.debug(f"Python:            {sys.version}")
+    logger.debug(f"Python executable: {sys.executable}")
+    logger.debug(f"CPU cores:         {multiprocessing.cpu_count()}")
+
+    # LD_LIBRARY_PATH — critical for CUDA shared libs on Linux
+    ld = os.environ.get("LD_LIBRARY_PATH", "(not set)")
+    logger.debug(f"LD_LIBRARY_PATH:   {ld}")
+
+    # nvidia-smi — GPU hardware + driver info
+    logger.debug("--- nvidia-smi ---")
+    try:
+        result = subprocess.run(
+            ["nvidia-smi"], capture_output=True, text=True, timeout=10
+        )
+        for line in result.stdout.splitlines():
+            logger.debug(f"  {line}")
+        if result.stderr:
+            logger.debug(f"  stderr: {result.stderr.strip()}")
+    except FileNotFoundError:
+        logger.debug("  nvidia-smi not found on PATH — no NVIDIA GPU detected")
+    except subprocess.TimeoutExpired:
+        logger.debug("  nvidia-smi timed out")
+
+    # onnxruntime providers + version
+    logger.debug("--- onnxruntime ---")
+    try:
+        import onnxruntime as ort
+        logger.debug(f"  version:            {ort.__version__}")
+        logger.debug(f"  available providers: {ort.get_available_providers()}")
+        device_info = ort.get_device()
+        logger.debug(f"  device:             {device_info}")
+    except ImportError:
+        logger.debug("  onnxruntime not installed")
+
+    # Relevant pip packages
+    logger.debug("--- pip packages ---")
+    for pkg in ["onnxruntime-gpu", "onnxruntime", "numpy", "pillow"]:
+        try:
+            result = subprocess.run(
+                [sys.executable, "-m", "pip", "show", pkg],
+                capture_output=True, text=True,
+            )
+            if result.returncode == 0:
+                summary = "  |  ".join(
+                    line for line in result.stdout.splitlines()
+                    if any(line.startswith(k) for k in ("Name:", "Version:", "Location:"))
+                )
+                logger.debug(f"  {summary}")
+            else:
+                logger.debug(f"  {pkg}: NOT INSTALLED")
+        except Exception as e:
+            logger.debug(f"  {pkg}: query failed ({e})")
+
+    logger.debug("=" * 60)
 
 
 # ============================================================================
@@ -250,7 +331,19 @@ class ONNXModel:
         self.preprocess_fn = preprocess_fn
         self.batch_tiles = batch_tiles
 
-        self.session = ort.InferenceSession(onnx_path, providers=providers)
+        opts = ort.SessionOptions()
+        if any("CUDA" in p for p in providers):
+            # GPU handles the heavy work; keep CPU thread pools small
+            opts.intra_op_num_threads = 2
+            opts.inter_op_num_threads = 1
+        else:
+            # CPU-only: use half the available cores
+            import multiprocessing
+            n = max(1, multiprocessing.cpu_count() // 2)
+            opts.intra_op_num_threads = n
+            opts.inter_op_num_threads = max(1, n // 2)
+
+        self.session = ort.InferenceSession(onnx_path, sess_options=opts, providers=providers)
         self.input_name = self.session.get_inputs()[0].name
         logger.info(f"  Loaded {name} from {onnx_path}")
 
@@ -666,7 +759,10 @@ def main():
 
     logger.info("=" * 60)
     logger.info("Ensemble Leaf Classifier — Inference")
+    logger.info(f"Log file: {_LOG_FILE}")
     logger.info("=" * 60)
+
+    log_system_info()
 
     # Resolve model directories
     model_dirs = {

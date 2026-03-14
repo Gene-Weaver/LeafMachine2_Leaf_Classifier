@@ -38,6 +38,9 @@ logger.addHandler(_file)
 # https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html
 # ============================================================================
 CUDA_TO_ORT = {
+    (12, 9): "onnxruntime-gpu==1.21.0",
+    (12, 8): "onnxruntime-gpu==1.21.0",
+    (12, 7): "onnxruntime-gpu==1.21.0",
     (12, 6): "onnxruntime-gpu==1.21.0",
     (12, 5): "onnxruntime-gpu==1.21.0",
     (12, 4): "onnxruntime-gpu==1.21.0",
@@ -324,6 +327,22 @@ def main():
         logger.info("Correct version already installed. Verifying GPU provider...")
         verify_cuda_provider()
         return
+
+    # If a newer onnxruntime-gpu is already installed, keep it — newer versions
+    # are backwards-compatible and may support the CUDA version just as well.
+    if existing and existing.startswith("onnxruntime-gpu=="):
+        def _ver(pkg_str):
+            try:
+                return tuple(int(x) for x in pkg_str.split("==")[1].split("."))
+            except Exception:
+                return (0,)
+        if _ver(existing) >= _ver(target_package):
+            logger.info(
+                f"Installed {existing} is >= target {target_package} — keeping it. "
+                f"Verifying GPU provider..."
+            )
+            verify_cuda_provider()
+            return
 
     # Step 4: Remove old install and put the right one in
     if existing:
