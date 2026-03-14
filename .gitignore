@@ -50,6 +50,11 @@ data/
 results/
 test_results/
 
+# Claude Code (local state)
+.claude/
+.claude_session/
+.claude_context/
+
 # Development docs
 CLAUDE.md
 
