@@ -38,6 +38,7 @@ env/
 # Training outputs (keep models/)
 output_*/
 test_deployment/
+gemini_embeddings_exp/
 
 # Data directories
 data/
