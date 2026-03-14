@@ -4,4 +4,4 @@
 
 Pillow>=10.0.0
 numpy>=1.24.0
-onnxruntime-gpu>=1.17.0       # use `onnxruntime` (CPU-only) if no GPU
+onnxruntime-gpu      # use `onnxruntime` (CPU-only) if no GPU
